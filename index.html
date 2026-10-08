@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OncehLab — Clicker Rings</title>
+<meta name="description" content="Pixel-block rings with a press-and-snap top. 3D printed to order in the Bay Area.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --tint:#EAFBFF;
+    --tint-2:#CDF4FF;
+    --ink:#0A0A0A;
+    --ink-soft:#4A4A4A;
+    --cyan:#00C2E8;
+    --cyan-dark:#0090AD;
+    --rule:rgba(10,10,10,.18);
+    --gut:clamp(14px,2vw,26px);
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0A0A0A; --tint:#0F2A30; --tint-2:#123540;
+      --ink:#F5FEFF; --ink-soft:#9FD8E4; --rule:rgba(245,254,255,.22);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0A0A0A; --tint:#0F2A30; --tint-2:#123540;
+    --ink:#F5FEFF; --ink-soft:#9FD8E4; --rule:rgba(245,254,255,.22);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;
+    font-size:clamp(16px,.9vw + 13px,19px);line-height:1.58;overflow-x:hidden;
+  }
+  img{max-width:100%;height:auto;display:block}
+  h1,h2,h3,.grot{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;font-weight:800;letter-spacing:-.04em;line-height:.9;margin:0}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+  .rule{border:0;border-top:3px solid var(--ink);margin:0}
+  .hair{border:0;border-top:1px solid var(--rule);margin:0}
+
+  /* ---- sticky bar with permanent CTA ---- */
+  .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--paper);border-bottom:3px solid var(--ink)}
+  .bar-in{display:flex;align-items:center;gap:clamp(12px,3vw,34px);height:72px}
+  .brand{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(20px,2vw,26px);letter-spacing:-.05em;margin-right:auto}
+  .brand span{color:var(--cyan-dark)}
+  .bar nav{display:flex;gap:clamp(12px,2vw,26px);font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:15px;letter-spacing:-.02em}
+  .bar nav a{text-decoration:none;padding:4px 0;border-bottom:3px solid transparent}
+  .bar nav a:hover,.bar nav a:focus-visible{border-bottom-color:var(--cyan)}
+  .btn{
+    display:inline-block;border:0;cursor:pointer;text-decoration:none;
+    font-family:"Bricolage Grotesque",sans-serif;font-weight:800;letter-spacing:-.02em;
+    background:var(--cyan);color:var(--ink);padding:14px 22px;font-size:17px;line-height:1;
+  }
+  .btn:hover{background:var(--ink);color:var(--cyan)}
+  .btn-bar{padding:12px 18px;font-size:15px;white-space:nowrap}
+  .btn-lg{padding:20px 34px;font-size:clamp(18px,1.6vw,22px)}
+  .btn-ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 3px var(--ink)}
+  .btn-ghost:hover{background:var(--ink);color:var(--paper)}
+  @media (max-width:760px){.bar nav{display:none}}
+
+  /* ---- hero ---- */
+  .hero{padding:clamp(28px,5vw,64px) 0 0}
+  h1{font-size:clamp(58px,13.4vw,196px);letter-spacing:-.055em}
+  h1 em{font-style:normal;display:block;color:var(--cyan-dark)}
+  .hero-sub{display:grid;grid-template-columns:1.1fr 1fr;gap:var(--gut);align-items:end;margin-top:clamp(20px,3vw,40px)}
+  .deck{margin:0;font-size:clamp(18px,1.4vw,23px);max-width:32ch;font-weight:500}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .hero-media{display:grid;grid-template-columns:1fr 1fr;gap:var(--gut);margin-top:clamp(24px,4vw,48px);align-items:end}
+  .photo{background:var(--tint);padding:clamp(12px,2vw,26px);display:grid;place-items:center}
+  .photo.flush{padding:0}
+
+  /* clicker widget */
+  .clicker{background:var(--tint-2);padding:clamp(18px,2.4vw,30px);display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .btn-stack{position:relative;width:114px;height:114px;flex:none}
+  .btn-base{position:absolute;inset:14px 0 0 0;background:var(--ink)}
+  .btn-top{position:absolute;inset:0 0 14px 0;background:var(--cyan);border:0;display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .07s steps(2,end)}
+  .btn-top:active,.btn-top.is-down{transform:translateY(12px)}
+  .btn-top svg{width:60%;height:60%}
+  .count{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(32px,4vw,52px);letter-spacing:-.05em;line-height:1}
+  .count-sub{font-size:16px;color:var(--ink-soft);margin:8px 0 0;max-width:24ch}
+
+  /* ---- ticker ---- */
+  .band{background:var(--cyan);color:var(--ink);overflow:hidden;margin-top:clamp(30px,5vw,60px)}
+  .band-track{display:flex;width:max-content;animation:slide 26s linear infinite}
+  .band-track span{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(22px,2.8vw,38px);padding:14px 24px;white-space:nowrap;letter-spacing:-.03em}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.band-track{animation:none}.btn-top{transition:none}}
+
+  /* ---- section frame: label column + content column ---- */
+  .sec{padding:clamp(44px,6.5vw,100px) 0}
+  .sec-grid{display:grid;grid-template-columns:200px 1fr;gap:var(--gut)}
+  .sec-label{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:16px;letter-spacing:-.02em;color:var(--ink-soft);padding-top:10px}
+  h2{font-size:clamp(34px,5.6vw,80px)}
+  .sec-lede{font-size:clamp(17px,1.2vw,21px);max-width:44ch;margin:18px 0 0;color:var(--ink-soft)}
+  @media (max-width:860px){.sec-grid{grid-template-columns:1fr}.sec-label{padding-top:0}}
+
+  /* editorial */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:var(--gut);margin-top:clamp(24px,3vw,40px)}
+  .cols p{margin:0 0 1em}
+  .cols p:first-child::first-letter{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;float:left;font-size:4em;line-height:.76;padding:.06em .1em 0 0;color:var(--cyan-dark)}
+  .hand{width:clamp(96px,9vw,140px);color:var(--ink);margin-top:20px}
+
+  /* pieces */
+  .pieces{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gut);margin-top:clamp(26px,3.4vw,44px)}
+  .piece-cap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:12px;padding-bottom:8px;border-bottom:3px solid var(--ink)}
+  .piece-name{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(22px,2.1vw,30px);letter-spacing:-.04em}
+  .piece-price{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:18px}
+  .piece-note{font-size:16px;color:var(--ink-soft);margin:8px 0 0}
+
+  /* filaments */
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chip{display:flex;align-items:center;gap:10px;background:var(--tint);padding:9px 15px 9px 9px;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:15px}
+  .dot{width:22px;height:22px;flex:none}
+
+  /* photo slots */
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gut);margin-top:clamp(24px,3vw,40px)}
+  .slot{aspect-ratio:4/5;background:var(--tint);display:grid;place-items:center;text-align:center;padding:20px;color:var(--ink-soft)}
+  .slot b{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:16px;display:block;color:var(--ink)}
+  .slot i{font-size:14px;display:block;margin-top:4px;font-style:normal}
+  .slot svg{color:var(--ink)}
+
+  /* facts */
+  .facts{margin-top:clamp(24px,3vw,40px)}
+  .fact{display:grid;grid-template-columns:1fr auto;gap:14px;padding:15px 0;border-top:1px solid var(--rule);align-items:baseline}
+  .fact:last-child{border-bottom:1px solid var(--rule)}
+  .fact b{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(17px,1.5vw,21px);letter-spacing:-.03em}
+  .fact span{color:var(--ink-soft);font-size:17px;text-align:right}
+  .two{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(20px,3.4vw,56px);align-items:start}
+  .caption{font-size:15px;color:var(--ink-soft);margin-top:10px}
+
+  /* order */
+  .order{background:var(--ink);color:#fff;padding:clamp(40px,6vw,96px) 0}
+  .order h2{color:var(--cyan);font-size:clamp(44px,9.5vw,142px)}
+  .order-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);margin-top:clamp(24px,3vw,44px);align-items:start}
+  .order p{color:#CFC8FF;max-width:36ch}
+  .price-big{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(66px,11vw,150px);line-height:.82;letter-spacing:-.06em}
+  .sizes{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0}
+  .size{background:transparent;color:#fff;box-shadow:inset 0 0 0 3px rgba(255,255,255,.45);border:0;padding:11px 16px;cursor:pointer;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:16px}
+  .size[aria-pressed="true"]{background:var(--cyan);color:var(--ink);box-shadow:none}
+  .field-label{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:16px;color:#fff;display:block;margin-bottom:8px}
+  form{display:flex;flex-wrap:wrap;gap:10px}
+  input[type=email]{flex:1 1 240px;min-width:0;padding:16px;border:0;box-shadow:inset 0 0 0 3px rgba(255,255,255,.45);background:transparent;color:#fff;font-family:"Newsreader",serif;font-size:18px}
+  input[type=email]::placeholder{color:#8F86CE}
+  .form-note{font-size:15px;color:#A79FE0;margin:14px 0 0}
+
+  footer{padding:30px 0 44px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:15px;color:var(--ink-soft)}
+  :where(a,button,input):focus-visible{outline:3px solid var(--cyan-dark);outline-offset:3px}
+
+  @media (max-width:860px){
+    .hero-sub,.hero-media,.cols,.two,.order-grid{grid-template-columns:1fr}
+    .pieces{grid-template-columns:1fr 1fr}
+    .slots{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .pieces,.slots{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap bar-in">
+    <div class="brand">Onceh<span>Lab</span></div>
+    <nav aria-label="Sections">
+      <a href="#pieces">Rings</a>
+      <a href="#colors">Filaments</a>
+      <a href="#made">How it's made</a>
+    </nav>
+    <a class="btn btn-bar" href="#order">Reserve — $18</a>
+  </div>
+</div>
+
+<main>
+<section class="wrap hero">
+  <h1>Rings that<em>click back.</em></h1>
+
+  <div class="hero-sub">
+    <div>
+      <p class="deck">A pixel block on a band, with a top that presses down and snaps back. Quiet enough for a meeting, loud enough to notice.</p>
+      <div class="hero-actions">
+        <a class="btn btn-lg" href="#order">Reserve a ring</a>
+        <a class="btn btn-lg btn-ghost" href="#pieces">See the four</a>
+      </div>
+    </div>
+    <div class="clicker">
+      <div class="btn-stack">
+        <div class="btn-base" aria-hidden="true"></div>
+        <button class="btn-top" id="clickBtn" aria-describedby="clickCount"></button>
+      </div>
+      <div>
+        <div class="count" id="clickCount">0 clicks</div>
+        <p class="count-sub">Go ahead — this is roughly the real one, minus the snap.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-media">
+    <div class="photo"><img src="images/hero.jpg" alt="Translucent blue 3D-printed pixel ring" width="768" height="870"></div>
+    <div class="photo"><img src="images/pink.jpg" alt="Pink pixel block ring on a translucent magenta band" width="768" height="870"></div>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"><div class="band-track" id="bandTrack"></div></div>
+
+<section class="wrap sec">
+  <div class="sec-grid">
+    <div class="sec-label">The idea</div>
+    <div>
+      <h2>A fidget you can wear out of the house.</h2>
+      <div class="cols">
+        <div>
+          <p>Most fidget toys live in a pocket and get lost by Thursday. This one sits on your finger, so it's there in the standup, in the queue, on the bus. The block presses about two millimetres and comes back.</p>
+          <p>Each one is printed flat in a single overnight batch, then hand-finished: band deburred, block seated, faces cleaned with a pick.</p>
+        </div>
+        <div>
+          <p>The band is solid and comfortable at 8&nbsp;mm wide. The top is a separate part in a second filament, which is why the colours can disagree with each other so happily.</p>
+          <p>Nothing is glued. If you ever want a different top, pull the old one and press a new one in.</p>
+          <div class="hand" id="handArt" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap sec" id="pieces">
+  <div class="sec-grid">
+    <div class="sec-label">The rings</div>
+    <div>
+      <h2>Four to start</h2>
+      <p class="sec-lede">Small batches, printed in the order they're reserved. Sizes 6 through 11.</p>
+      <div class="pieces">
+        <figure style="margin:0">
+          <div class="photo"><img src="images/green.jpg" alt="Green pixel block ring on a matte black band" width="768" height="870"></div>
+          <figcaption>
+            <div class="piece-cap"><span class="piece-name">Sprout</span><span class="piece-price">$18</span></div>
+            <p class="piece-note">Opaque green top, matte black band.</p>
+          </figcaption>
+        </figure>
+        <figure style="margin:0">
+          <div class="photo"><img src="images/purple.jpg" alt="Violet pixel block ring on a matte black band" width="768" height="870"></div>
+          <figcaption>
+            <div class="piece-cap"><span class="piece-name">Dusk</span><span class="piece-price">$18</span></div>
+            <p class="piece-note">Two-tone violet top, matte black band.</p>
+          </figcaption>
+        </figure>
+        <figure style="margin:0">
+          <div class="photo"><img src="images/pink.jpg" alt="Pink pixel block ring on a translucent magenta band" width="768" height="870"></div>
+          <figcaption>
+            <div class="piece-cap"><span class="piece-name">Blush</span><span class="piece-price">$18</span></div>
+            <p class="piece-note">Soft pink top, translucent magenta band.</p>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="hero-actions" style="margin-top:28px"><a class="btn btn-lg" href="#order">Reserve a ring</a></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap sec" id="colors">
+  <div class="sec-grid">
+    <div class="sec-label">Filaments</div>
+    <div>
+      <h2>Mix the top and the band</h2>
+      <p class="sec-lede">Any combination on the shelf. Translucents glow differently under a desk lamp.</p>
+      <div class="chips">
+        <span class="chip"><span class="dot" style="background:#00C2E8"></span>Translucent cyan</span>
+        <span class="chip"><span class="dot" style="background:#0A0A0A"></span>Matte black</span>
+        <span class="chip"><span class="dot" style="background:#FFFFFF;box-shadow:inset 0 0 0 2px #0A0A0A"></span>Bright white</span>
+        <span class="chip"><span class="dot" style="background:#BFBFBF"></span>Cool grey</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap sec">
+  <div class="sec-grid">
+    <div class="sec-label">In use</div>
+    <div>
+      <h2>Out in the world</h2>
+      <p class="sec-lede">Shots of the rings on actual hands go in these three frames.</p>
+      <div class="slots">
+        <div class="slot"><div><span data-cam></span><b>On a hand, close up</b><i>4:5, daylight</i></div></div>
+        <div class="slot"><div><span data-cam></span><b>Mid-click, at a desk</b><i>4:5, slight blur is fine</i></div></div>
+        <div class="slot"><div><span data-cam></span><b>Stack of three, worn</b><i>4:5, plain background</i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap sec" id="made">
+  <div class="sec-grid">
+    <div class="sec-label">The making</div>
+    <div>
+      <h2>Made twelve at a time</h2>
+      <div class="two" style="margin-top:clamp(22px,3vw,40px)">
+        <div>
+          <p style="margin:0;max-width:38ch">A full bed is twelve bands and sixteen tops, about nine hours. Everything is printed, sorted and packed in the studio.</p>
+          <div class="facts">
+            <div class="fact"><b>Material</b><span>PLA, 0.12 mm layers</span></div>
+            <div class="fact"><b>Band width</b><span>8 mm, rounded inside</span></div>
+            <div class="fact"><b>Sizes</b><span>US 6 – 11</span></div>
+            <div class="fact"><b>Tops</b><span>Press-fit, swappable</span></div>
+            <div class="fact"><b>Ships</b><span>Within 3 days, flat mailer</span></div>
+          </div>
+        </div>
+        <figure style="margin:0">
+          <div class="photo flush"><img src="images/pack.jpg" alt="A ring bagged with a kraft paper hang tag tied with twine" width="698" height="1000"></div>
+          <figcaption class="caption">Bagged with a kraft tag, plus a spare top if you ordered one.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap sec">
+  <div class="sec-grid">
+    <div class="sec-label">Also</div>
+    <div>
+      <div class="two">
+        <div class="photo flush"><img src="images/heart.jpg" alt="A pixel heart dish printed in black with a mint green interior" width="1000" height="1000"></div>
+        <div>
+          <h2>A place to put it down</h2>
+          <p class="sec-lede">A small two-colour dish for the nightstand. Holds three rings, a key, or nothing at all.</p>
+          <div class="piece-cap" style="max-width:280px"><span class="piece-name">Heart dish</span><span class="piece-price">$22</span></div>
+          <div class="hero-actions" style="margin-top:22px"><a class="btn" href="#order">Add one to your reservation</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="order" id="order">
+  <div class="wrap">
+    <h2>Reserve one</h2>
+    <div class="order-grid">
+      <div>
+        <div class="price-big">$18</div>
+        <p style="margin-top:14px">Free US shipping on two or more. Pick a size, leave an email, and you'll get a note when your batch goes on the bed.</p>
+        <span class="field-label" style="margin-top:22px">Ring size</span>
+        <div class="sizes" role="group" aria-label="Ring size">
+          <button class="size" aria-pressed="false">6</button>
+          <button class="size" aria-pressed="false">7</button>
+          <button class="size" aria-pressed="true">8</button>
+          <button class="size" aria-pressed="false">9</button>
+          <button class="size" aria-pressed="false">10</button>
+          <button class="size" aria-pressed="false">11</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label" for="email">Email</label>
+        <form id="reserveForm" novalidate>
+          <input type="email" id="email" placeholder="you@email.com" required>
+          <button class="btn btn-lg" type="submit">Reserve a ring</button>
+        </form>
+        <p class="form-note" id="formNote">No shop yet — this list is how the first batch gets allocated.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <span>OncehLab — a small industrial design studio in the Bay Area.</span>
+  <span>hello@oncehlab.com</span>
+</footer>
+
+<script>
+(function(){
+  var NS="http://www.w3.org/2000/svg";
+  function pixels(art,colors,unit){
+    unit=unit||10;var w=art[0].length,h=art.length;
+    var svg=document.createElementNS(NS,"svg");
+    svg.setAttribute("viewBox","0 0 "+w*unit+" "+h*unit);
+    svg.setAttribute("width","100%");svg.setAttribute("aria-hidden","true");
+    for(var y=0;y<h;y++)for(var x=0;x<w;x++){
+      var c=art[y][x];if(c==="."||c===" ")continue;
+      var r=document.createElementNS(NS,"rect");
+      r.setAttribute("x",x*unit);r.setAttribute("y",y*unit);
+      r.setAttribute("width",unit+0.5);r.setAttribute("height",unit+0.5);
+      r.setAttribute("fill",colors[c]||"currentColor");
+      svg.appendChild(r);
+    }
+    return svg;
+  }
+  var hand=["....XX.XX...",".XX.XX.XX.XX",".XX.XX.XX.XX",".RR.XX.XX.XX",".RR.XX.XX.XX",".XXXXXXXXXXX","XXXXXXXXXXXX","XXXXXXXXXXXX","XXXXXXXXXXX.",".XXXXXXXXXX.","..XXXXXXXX..","...XXXXXX...","....XXXX....","....XXXX...."];
+  var handEl=document.getElementById("handArt");
+  if(handEl)handEl.appendChild(pixels(hand,{X:"currentColor",R:"#0090AD"},10));
+
+  var cam=["..XXXX......","XXXXXXXXXXX.","X....XX....X","X..XXXXXX..X","X.XX....XX.X","X.XX....XX.X","X..XXXXXX..X","XXXXXXXXXXXX"];
+  document.querySelectorAll("[data-cam]").forEach(function(el){
+    var s=pixels(cam,{X:"currentColor"},8);s.style.width="52px";s.style.margin="0 auto 12px";el.appendChild(s);
+  });
+
+  var block=["XXXXXXXX","X..XX..X","X..XX..X","XXXXXXXX","X.XXXX.X","X.X..X.X","XXX..XXX","XXXXXXXX"];
+  var btn=document.getElementById("clickBtn");
+  if(btn)btn.appendChild(pixels(block,{X:"#0A0A0A"},10));
+
+  var n=0,out=document.getElementById("clickCount");
+  if(btn&&out)btn.addEventListener("click",function(){
+    n++;out.textContent=n+(n===1?" click":" clicks");
+    btn.classList.add("is-down");setTimeout(function(){btn.classList.remove("is-down");},90);
+  });
+
+  var track=document.getElementById("bandTrack");
+  if(track){var html="";for(var i=0;i<12;i++)html+="<span>press it. release it. do it again. </span>";track.innerHTML=html;}
+
+  document.querySelectorAll(".size").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.querySelectorAll(".size").forEach(function(o){o.setAttribute("aria-pressed","false");});
+      b.setAttribute("aria-pressed","true");
+    });
+  });
+
+  var form=document.getElementById("reserveForm");
+  if(form)form.addEventListener("submit",function(e){
+    e.preventDefault();
+    var v=document.getElementById("email").value.trim(),note=document.getElementById("formNote");
+    var size=document.querySelector('.size[aria-pressed="true"]');
+    if(!v||v.indexOf("@")<1){note.textContent="That email is missing an @ — check it and try again.";return;}
+    note.textContent="Saved. Size "+(size?size.textContent:"8")+" is on the list for the next batch.";
+    form.reset();
+  });
+})();
+</script>
+</body>
+</html>
